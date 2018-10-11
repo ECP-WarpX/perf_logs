@@ -20,7 +20,7 @@ var	yAxis = d3.svg.axis().scale(y)
 // Define the line
 var	valueline = d3.svg.line()
 	.x(function(d) { return x(d.date); })
-	.y(function(d) { return y(d.close); });
+	.y(function(d) { return y(d.step_time); });
     
 // Adds the svg canvas
 var	svg = d3.select("div")
@@ -31,15 +31,15 @@ var	svg = d3.select("div")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
  
 // Get the data
-d3.csv("data.csv", function(error, data) {
+d3.csv("logs_csv/data.csv", function(error, data) {
 	data.forEach(function(d) {
 		d.date = parseDate(d.date);
-		d.close = +d.close;
+		d.step_time = +d.step_time;
 	});
  
 	// Scale the range of the data
 	x.domain(d3.extent(data, function(d) { return d.date; }));
-	y.domain([0, d3.max(data, function(d) { return d.close; })]);
+	y.domain([0, d3.max(data, function(d) { return d.step_time; })]);
  
 	// Add the valueline path.
 	svg.append("path")	
