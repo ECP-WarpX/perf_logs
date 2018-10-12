@@ -21,7 +21,7 @@ for title, file in title_and_files:
     p.xaxis.axis_label = 'Date'
     p.yaxis.axis_label = 'Execution time (s)'
     p.line(df['date'], df['step_time'], color='navy', alpha=0.5)
-    div, script = components(p)
+    script, div = components(p)
     plots.append((title, div, script))
 
 
