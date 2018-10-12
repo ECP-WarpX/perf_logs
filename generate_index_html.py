@@ -51,8 +51,7 @@ legend = Legend(items=legend_it, location=(0, 0))
 legend.click_policy="mute"
 fig.add_layout(legend, 'right')
 # Store each plot in a 2d, here we chose a single row 
-p3 = gridplot([ fig_list ])
-div, script = components(p3)
+script, div = components( gridplot([ fig_list ]) )
 plots.append(('Performance history for each test', div, script))
 
 ################################################################################################
@@ -83,8 +82,7 @@ for count, input_file in enumerate( df_filtered['input_file'].unique() ):
     fig_list.append( fig )
     fig.legend.location='bottom_left'
 # Store each plot in a 2d, here we chose a single row 
-p1 = gridplot([ fig_list ])
-div, script = components(p1)
+script, div = components( gridplot([ fig_list ]) )
 plots.append(('Last weak scaling on up to > 512 nodes :' + df_filtered.iloc[0]['date'] , div, script))
 
 #################################################################################
@@ -128,8 +126,7 @@ legend = Legend(items=legend_it, location=(0, 0))
 legend.click_policy="mute"
 fig.add_layout(legend, 'right')
 # Store each plot in a 2d, here we chose a single row 
-p2 = gridplot([ fig_list ])
-div, script = components(p2)
+script, div = components( gridplot([ fig_list ]) )
 plots.append(('Performance history for each number of node (see above for legend)', div, script))
 
 # Generate the HTML file
