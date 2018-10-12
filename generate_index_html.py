@@ -1,33 +1,139 @@
-import bokeh
-from bokeh.plotting import output_file, figure, show
+import shutil, os
+from bokeh.plotting import figure, gridplot, output_file, show
+from bokeh.models import Legend
 from bokeh.embed import components
 from jinja2 import Template
 import pandas as pd
 
+df = pd.read_csv( './logs_csv/cori_knl.csv' )
 
-
-title_and_files = [ 
-    ('Perf. single node', 
-     './logs_csv/per_n_nodes/cori_knl_alltests_nnode_1.csv'),
-    ('Perf. two node', 
-     './logs_csv/per_n_nodes/cori_knl_alltests_nnode_2.csv') ]
+color_list = ('red', 'orange', 'green', 'blue', 'brown', 'gray')
 plots = []
-for title, file in title_and_files:
-    df = pd.read_csv(file)
-    df['date'] = pd.to_datetime(df['date'])
-    # create a new plot with a datetime axis type
-    p = figure(plot_width=300, plot_height=250, 
-               x_axis_type="datetime", tools="box_zoom,reset")
-    p.xaxis.axis_label = 'Date'
-    p.yaxis.axis_label = 'Execution time (s)'
-    p.line(df['date'], df['step_time'], color='navy', alpha=0.5)
-    div, script = components(p)
-    plots.append((title, div, script))
+#################################################################################
+### First part: for a given test, give performance history for several n_node ###
+#################################################################################
+node_list = [1, 2]
+# Which quantities to plot on this dataframe
+x_axis = 'date'
+y_axis = 'step_time' 
+x_label = x_axis
+y_label = y_axis + ' (s)'
+# Prepare list of figures
+fig_list = []
+input_file_list = df['input_file'].unique()
+# Loop on input_file, i.e. different tests
+# One figure per test
+for count, input_file in enumerate( input_file_list ):
+    df_filtered = df[ df['input_file']==input_file ]
+    y_data_allmax = df_filtered[y_axis].max()
+    fig = figure(width=250, plot_height=250, title=input_file.replace('automated_test_',''), 
+                 y_range=[0., 1.1*y_data_allmax], x_axis_type="datetime")
+    # Ugly trick to have the legend outside the plot.
+    # The last plot of the line is larger, and a fraction of 
+    # it contains the legend...
+    if count==len( input_file_list ) - 1:
+        fig = figure(width=350, plot_height=250, title=input_file.replace('automated_test_',''), 
+                     y_range=[0., 1.1*y_data_allmax], x_axis_type="datetime")
+    # Loop on n_node
+    # All on the same figure different colors
+    legend_it = [] # Trick to have legend outside the plot
+    for inner_count, n_node in enumerate( node_list ):
+        color = color_list[inner_count]
+        x_data = pd.to_datetime(df_filtered[df_filtered['n_node']==n_node][x_axis])
+        y_data = df_filtered[df_filtered['n_node']==n_node][y_axis]
+        c = fig.circle(x_data, y_data, size=5, fill_color=color, line_color=color, alpha=.5)
+        legend_it.append((str(n_node) + ' nodes', [c]))
+    fig.xaxis.axis_label = x_label
+    fig.yaxis.axis_label = y_label
+    fig_list.append( fig )
+# For the legend ugly trick
+legend = Legend(items=legend_it, location=(0, 0))
+legend.click_policy="mute"
+fig.add_layout(legend, 'right')
+# Store each plot in a 2d, here we chose a single row 
+p3 = gridplot([ fig_list ])
+div, script = components(p3)
+plots.append(('Performance history for each test', div, script))
 
+################################################################################################
+### Second part: for a given test, give the latest weak scaling on up to more that 512 nodes ###
+################################################################################################
+# Get final run with max nnode >= 1
+max_start_date = df[df['n_node']>=1]['start_date'].max()
+df_filtered = df[df['start_date']==max_start_date]
+# Which quantities to plot on this dataframe
+x_axis = 'n_node' 
+y_axis = 'step_time' 
+x_label = x_axis
+y_label = y_axis + ' (s)'
+# Prepare list of figures
+fig_list = []
+# Loop on input_file, i.e. different tests
+# One figure per test
+for count, input_file in enumerate( df_filtered['input_file'].unique() ):
+    color = color_list[count]
+    x_data = df_filtered[df_filtered['input_file']==input_file][x_axis]
+    y_data = df_filtered[df_filtered['input_file']==input_file][y_axis]
+    fig = figure(width=250, plot_height=250, title=input_file.replace('automated_test_',''), 
+                 y_range=[0., 1.1*y_data.max()])
+    fig.circle(x_data, y_data, size=5, fill_color=color, line_color=color, 
+               alpha=.5, legend=input_file.replace('automated_test_',''))
+    fig.xaxis.axis_label = x_label
+    fig.yaxis.axis_label = y_label
+    fig_list.append( fig )
+    fig.legend.location='bottom_left'
+# Store each plot in a 2d, here we chose a single row 
+p1 = gridplot([ fig_list ])
+div, script = components(p1)
+plots.append(('Last weak scaling on up to > 512 nodes :' + df_filtered.iloc[0]['date'] , div, script))
+
+#################################################################################
+### Third part: for a given test, give performance history for several n_node ###
+#################################################################################
+# Which quantities to plot on this dataframe
+x_axis = 'date'
+y_axis = 'step_time' 
+x_label = x_axis
+y_label = y_axis + ' (s)'
+# Prepare list of figures
+fig_list = []
+# Loop on n_node
+# One figure per value
+for count, n_node in enumerate( node_list ):
+    df_filtered = df[ df['n_node']==n_node ]
+    y_data_allmax = df_filtered[y_axis].max()
+    fig = figure(width=250, plot_height=250, title='n_node = ' + str(n_node), 
+                 y_range=[0., 1.1*y_data_allmax], x_axis_type="datetime")
+    # Ugly trick to have the legend outside the plot.
+    # The last plot of the line is larger, and a fraction of 
+    # it contains the legend...
+    if count==len( node_list ) - 1:
+        fig = figure(width=440, plot_height=250, title='n_node = ' + str(n_node), 
+                     y_range=[0., 1.1*y_data_allmax], x_axis_type="datetime")
+    # Loop in put_file, i.e. different tests,
+    # Shown on the same figure with different colors
+    legend_it = []
+    for inner_count, input_file in enumerate( df_filtered['input_file'].unique() ):
+        color = color_list[inner_count]
+        x_data = pd.to_datetime(df_filtered[df_filtered['input_file']==input_file][x_axis])
+        y_data = df_filtered[df_filtered['input_file']==input_file][y_axis]
+        c = fig.circle(x_data, y_data, size=5, fill_color=color, line_color=color, 
+                   alpha=.5)
+        legend_it.append((input_file.replace('automated_test_',''), [c]))
+    fig.xaxis.axis_label = x_label
+    fig.yaxis.axis_label = y_label
+    fig_list.append( fig )
+# For the legend ugly trick
+legend = Legend(items=legend_it, location=(0, 0))
+legend.click_policy="mute"
+fig.add_layout(legend, 'right')
+# Store each plot in a 2d, here we chose a single row 
+p2 = gridplot([ fig_list ])
+div, script = components(p2)
+plots.append(('Performance history for each number of node (see above for legend)', div, script))
 
 # Generate the HTML file
 with open('templates/template_index.html') as f:
     template = Template(f.read())
 with open('index.html', 'w') as f:
     f.write(template.render(L=plots))
-
