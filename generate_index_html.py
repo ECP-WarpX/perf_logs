@@ -12,7 +12,9 @@ plots = []
 #################################################################################
 ### First part: for a given test, give performance history for several n_node ###
 #################################################################################
-node_list = [1, 8, 64, 512]
+node_list = [1, 8, 64, 512, 2048, 4096, 8192]
+# only keep n_node that are in df
+node_list = [ i for i in node_list if i <= df['n_node'].max() ]
 # Which quantities to plot on this dataframe
 x_axis = 'date'
 y_axis = 'step_time' 
@@ -59,8 +61,8 @@ plots.append(('Performance history for each test', div, script))
 ################################################################################################
 ### Second part: for a given test, give the latest weak scaling on up to more that 512 nodes ###
 ################################################################################################
-# Get final run with max nnode >= 1
-max_start_date = df[df['n_node']>=1]['start_date'].max()
+# Get final run with max nnode >= 512
+max_start_date = df[df['n_node']>=512]['start_date'].max()
 df_filtered = df[df['start_date']==max_start_date]
 # Which quantities to plot on this dataframe
 x_axis = 'n_node' 
