@@ -76,13 +76,13 @@ for count, input_file in enumerate( df_filtered['input_file'].unique() ):
     x_data = df_filtered[df_filtered['input_file']==input_file][x_axis]
     y_data = df_filtered[df_filtered['input_file']==input_file][y_axis]
     fig = figure(width=250, plot_height=250, title=input_file.replace('automated_test_',''), 
-                 y_range=[0., 1.1*y_data.max()])
+                 y_range=[0., 1.1*y_data.max()], x_axis_type="log")
     fig.circle(x_data, y_data, size=5, fill_color=color, line_color=color, 
                alpha=.5, legend=input_file.replace('automated_test_',''))
     fig.xaxis.axis_label = x_label
     fig.yaxis.axis_label = y_label
     fig_list.append( fig )
-    fig.legend.location='bottom_left'
+    fig.legend.location='bottom_right'
 # Store each plot in a 2d, here we chose a single row 
 p2 = gridplot([ fig_list ])
 div, script = components(p2)
