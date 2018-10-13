@@ -12,7 +12,7 @@ plots = []
 #################################################################################
 ### First part: for a given test, give performance history for several n_node ###
 #################################################################################
-node_list = [1, 2]
+node_list = [1, 8, 64, 512]
 # Which quantities to plot on this dataframe
 x_axis = 'date'
 y_axis = 'step_time' 
