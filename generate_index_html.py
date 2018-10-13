@@ -62,7 +62,7 @@ plots.append(('Performance history for each test', div, script))
 ### Second part: for a given test, give the latest weak scaling on up to more that 512 nodes ###
 ################################################################################################
 # Get final run with max nnode >= 512
-max_start_date = df[df['n_node']>=512]['start_date'].max()
+max_start_date = df[df['n_node']>=2]['start_date'].max()
 df_filtered = df[df['start_date']==max_start_date]
 # Which quantities to plot on this dataframe
 x_axis = 'n_node' 
@@ -135,7 +135,7 @@ fig.add_layout(legend, 'right')
 p3 = gridplot([ fig_list ])
 div, script = components(p3)
 # script, div = components( gridplot([ fig_list ]) )
-plots.append(('Performance history for each number of node (see above for legend)', div, script))
+plots.append(('Performance history for each number of node', div, script))
 
 # Generate the HTML file
 with open('templates/template_index.html') as f:
