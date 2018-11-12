@@ -28,7 +28,7 @@ input_file_list = df['input_file'].unique()
 for count, input_file in enumerate( input_file_list ):
     df_filtered = df[ df['input_file']==input_file ]
     y_data_allmax = df_filtered[y_axis].max()
-    if input_file == '6_output_2ppc':
+    if input_file == 'automated_test_6_output_2ppc':
         fig = figure(width=250, plot_height=250, title=input_file.replace('automated_test_',''), 
                      x_axis_type="datetime", y_axis_type='log')
     else:
