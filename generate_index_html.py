@@ -29,7 +29,8 @@ for count, input_file in enumerate( input_file_list ):
     df_filtered = df[ df['input_file']==input_file ]
     y_data_allmax = df_filtered[y_axis].max()
     fig = figure(width=250, plot_height=250, title=input_file.replace('automated_test_',''), 
-                 y_range=[0., 1.1*y_data_allmax], x_axis_type="datetime")
+                 x_axis_type="datetime", y_axis_type='log')
+    # y_range=[0., 1.1*y_data_allmax], 
     # Ugly trick to have the legend outside the plot.
     # The last plot of the line is larger, and a fraction of 
     # it contains the legend...
@@ -107,13 +108,15 @@ for count, n_node in enumerate( node_list ):
     df_filtered = df[ df['n_node']==n_node ]
     y_data_allmax = df_filtered[y_axis].max()
     fig = figure(width=250, plot_height=250, title='n_node = ' + str(n_node), 
-                 y_range=[0., 1.1*y_data_allmax], x_axis_type="datetime")
+                 x_axis_type="datetime", y_axis_type='log')
+    # y_range=[0., 1.1*y_data_allmax], 
     # Ugly trick to have the legend outside the plot.
     # The last plot of the line is larger, and a fraction of 
     # it contains the legend...
     if count==len( node_list ) - 1:
         fig = figure(width=440, plot_height=250, title='n_node = ' + str(n_node), 
-                     y_range=[0., 1.1*y_data_allmax], x_axis_type="datetime")
+                     x_axis_type="datetime", y_axis_type='log')
+    # y_range=[0., 1.1*y_data_allmax], 
     # Loop in put_file, i.e. different tests,
     # Shown on the same figure with different colors
     legend_it = []
