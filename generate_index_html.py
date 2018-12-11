@@ -78,8 +78,10 @@ for count, input_file in enumerate( df_filtered['input_file'].unique() ):
     color = color_list[count]
     x_data = df_filtered[df_filtered['input_file']==input_file][x_axis]
     y_data = df_filtered[df_filtered['input_file']==input_file][y_axis]
+    # fig = figure(width=250, plot_height=250, title=input_file.replace('automated_test_',''), 
+    #              y_range=[0., 1.1*y_data.max()], x_axis_type='log')
     fig = figure(width=250, plot_height=250, title=input_file.replace('automated_test_',''), 
-                 y_range=[0., 1.1*y_data.max()], x_axis_type='log', y_axis_type='log')
+                 x_axis_type='log', y_axis_type='log')
     fig.circle(x_data, y_data, size=5, fill_color=color, line_color=color, 
                alpha=.5, legend=input_file.replace('automated_test_',''))
     fig.xaxis.axis_label = x_label
