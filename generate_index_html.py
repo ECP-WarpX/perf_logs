@@ -8,7 +8,7 @@ import pandas as pd
 list_csv_files  = ['./logs_csv/cori_knl.csv', './logs_csv/summit.csv']
 list_html_files = ['index.html', 'index_summit.html']
 
-for csv_file, html_file in zip(list_csv_file, list_html_file):
+for csv_file, html_file in zip(list_csv_files, list_html_files):
 
     df = pd.read_csv( csv_file )
 
