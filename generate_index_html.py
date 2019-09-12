@@ -21,8 +21,6 @@ with open(html_file, 'w') as f:
 
         csv_file = dict_csv_files[machine]
 
-        print(machine, csv_file)
-
         df = pd.read_csv( csv_file )
 
         color_list = ('red', 'orange', 'green', 'blue', 'brown', 'gray')
