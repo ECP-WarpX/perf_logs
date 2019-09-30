@@ -58,7 +58,7 @@ with open(html_file, 'w') as f:
             legend_it = [] # Trick to have legend outside the plot
             for inner_count, n_node in enumerate( node_list ):
                 color = color_list[inner_count]
-                x_data = pd.to_datetime(df_filtered[df_filtered['n_node']==n_node][x_axis])
+                x_data = df_filtered[df_filtered['n_node']==n_node][x_axis].to_numpy()
                 y_data = df_filtered[df_filtered['n_node']==n_node][y_axis]
                 c = fig.circle(x_data, y_data, size=5, fill_color=color, line_color=color, alpha=.5)
                 legend_it.append((str(n_node) + ' nodes', [c]))
@@ -140,7 +140,7 @@ with open(html_file, 'w') as f:
             legend_it = []
             for inner_count, input_file in enumerate( df_filtered['input_file'].unique() ):
                 color = color_list[inner_count]
-                x_data = pd.to_datetime(df_filtered[df_filtered['input_file']==input_file][x_axis])
+                x_data = df_filtered[df_filtered['input_file']==input_file][x_axis].to_numpy()
                 y_data = df_filtered[df_filtered['input_file']==input_file][y_axis]
                 c = fig.circle(x_data, y_data, size=5, fill_color=color, line_color=color, 
                            alpha=.5)
