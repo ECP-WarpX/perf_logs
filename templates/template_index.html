@@ -3,23 +3,15 @@
 
   
 <html>
-  <head>
-    <title>WarpX performance logs</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.13.0.min.css" type="text/css" />      
-    <script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.13.0.min.js"></script>
-  </head>
-  <body>
-    <div class="container">
-      <h1>WarpX performance logs</h1>
-
-      {% for title, div, script in L %}
-      <h2>{{title}}</h2>
-      {{div}}
-      {{script}}
-      {% endfor %}
-    </div>
-  </body>
+<head>
+    <title>WarpX performance tests</title>
+    {{ js_resources }}
+    {{ css_resources }}
+    {{ script }}
+</head>
+<body>
+<h1>{{ title }}</h1>
+{{ myplot['myplot'] }}
+</body>
 </html>
+

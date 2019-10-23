@@ -38,23 +38,8 @@ for machine in list( dict_hdf5_files.keys() ):
     df_small.to_csv( dict_csv_files[machine] )
 
 # Generate the HTML file
-# with open('templates/template_index.html') as f:
-#     template = Template(f.read())
-
-template = Template("""
-<html>
-<head>
-    <title>WarpX performance tests</title>
-    {{ js_resources }}
-    {{ css_resources }}
-    {{ script }}
-</head>
-<body>
-<h1>{{ title }}</h1>
-{{ myplot['myplot'] }}
-</body>
-</html>
-""")
+with open('templates/template_index.html') as f:
+    template = Template(f.read())
 
 with io.open(html_file, 'w', encoding='utf-8') as f:
 
