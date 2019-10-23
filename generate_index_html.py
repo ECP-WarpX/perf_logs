@@ -1,10 +1,12 @@
 import io
 import shutil, os
-from bokeh.plotting import figure, gridplot, output_file, show
+from bokeh.plotting import figure, gridplot
 from bokeh.models import Legend
 from bokeh.embed import components
 from jinja2 import Template
+from bokeh.resources import INLINE
 import pandas as pd
+from bokeh.util.browser import view
 
 dict_csv_files = {
     'Cori @ NERSC' : './logs_csv/cori_knl.csv',
@@ -36,9 +38,25 @@ for machine in list( dict_hdf5_files.keys() ):
     df_small.to_csv( dict_csv_files[machine] )
 
 # Generate the HTML file
-with open('templates/template_index.html') as f:
-    template = Template(f.read())
-with io.open(html_file, 'w') as f:
+# with open('templates/template_index.html') as f:
+#     template = Template(f.read())
+
+template = Template("""
+<html>
+<head>
+    <title>WarpX performance tests</title>
+    {{ js_resources }}
+    {{ css_resources }}
+    {{ script }}
+</head>
+<body>
+<h1>{{ title }}</h1>
+{{ myplot['myplot'] }}
+</body>
+</html>
+""")
+
+with io.open(html_file, 'w', encoding='utf-8') as f:
 
     for machine in list( dict_csv_files.keys() ):
 
@@ -74,7 +92,7 @@ with io.open(html_file, 'w') as f:
             # The last plot of the line is larger, and a fraction of 
             # it contains the legend...
             if count==len( input_file_list ) - 1: # this is test automated_test_6_output_2ppc 
-                fig = figure(width=350, plot_height=250, title=input_file.replace('automated_test_',''), 
+                fig = figure(width=390, plot_height=250, title=input_file.replace('automated_test_',''), 
                              x_axis_type="datetime", y_axis_type='log')
             # Loop on n_node
             # All on the same figure different colors
@@ -93,10 +111,17 @@ with io.open(html_file, 'w') as f:
         legend.click_policy="mute"
         fig.add_layout(legend, 'right')
         # Store each plot in a 2d, here we chose a single row 
-        p1 = gridplot([ fig_list ])
-        div, script = components(p1)
-        # script, div = components( gridplot([ fig_list ]) )
-        plots.append((machine + ' Performance history for each test', div, script))
+        pp = gridplot([ fig_list ])        
+        js_resources = INLINE.render_js()
+        css_resources = INLINE.render_css()
+        plots = {'myplot': pp}
+        script, div = components(plots)
+        html = template.render(js_resources=js_resources,
+                               css_resources=css_resources,
+                               script=script,
+                               myplot=div,
+                               title=machine + ': Performance history for each test')
+        f.write(html)
 
         ################################################################################################
         ### Second part: for a given test, give the latest weak scaling on up to more that 512 nodes ###
@@ -126,12 +151,23 @@ with io.open(html_file, 'w') as f:
             fig.xaxis.axis_label = x_label
             fig.yaxis.axis_label = y_label
             fig_list.append( fig )
-            fig.legend.location='bottom_right'
+            # fig.legend.location='bottom_right'
         # Store each plot in a 2d, here we chose a single row 
-        p2 = gridplot([ fig_list ])
-        div, script = components(p2)
+        pp = gridplot([ fig_list ])        
+        js_resources = INLINE.render_js()
+        css_resources = INLINE.render_css()
+        plots = {'myplot': pp}
+        script, div = components(plots)
+        html = template.render(js_resources=js_resources,
+                               css_resources=css_resources,
+                               script=script,
+                               myplot=div,
+                               title=machine + ' Last weak scaling on up to > 512 nodes :' + df_filtered.iloc[0]['date'])
+        f.write(html)
+        # p2 = gridplot([ fig_list ])
+        # div, script = components(p2)
         # script, div = components( gridplot([ fig_list ]) )
-        plots.append((machine + ' Last weak scaling on up to > 512 nodes :' + df_filtered.iloc[0]['date'] , div, script))
+        # plots.append((machine + ' Last weak scaling on up to > 512 nodes :' + df_filtered.iloc[0]['date'] , div, script))
 
         #################################################################################
         ### Third part: for a given test, give performance history for several n_node ###
@@ -175,11 +211,25 @@ with io.open(html_file, 'w') as f:
         legend = Legend(items=legend_it, location=(0, 0))
         legend.click_policy="mute"
         fig.add_layout(legend, 'right')
-        # Store each plot in a 2d, here we chose a single row 
-        p3 = gridplot([ fig_list ])
-        div, script = components(p3)
-        # script, div = components( gridplot([ fig_list ]) )
-        print(machine + ' Performance history for each number of node')
-        plots.append((machine + ' Performance history for each number of node', div, script))
+        # Store each plot in a 2d, here we chose a single row
+        pp = gridplot([ fig_list ])        
+        js_resources = INLINE.render_js()
+        css_resources = INLINE.render_css()
+        plots = {'myplot': pp}
+        script, div = components(plots)
+        # html = template.render(L=plots)
+        html = template.render(js_resources=js_resources,
+                               css_resources=css_resources,
+                               script=script,
+                               myplot=div,
+                               title=machine + ' Performance history for each number of node')
+        f.write(html)
 
-        f.write(template.render(L=plots))
+        # p3 = gridplot([ fig_list ])
+        # div, script = components(p3)
+        # script, div = components( gridplot([ fig_list ]) )
+        # print(machine + ' Performance history for each number of node')
+        # plots.append((machine + ' Performance history for each number of node', div, script))
+        # f.write(template.render(L=plots))
+
+view(html_file)
