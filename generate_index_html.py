@@ -149,10 +149,6 @@ with io.open(html_file, 'w', encoding='utf-8') as f:
                                myplot=div,
                                title=machine + ' Last weak scaling on up to > 512 nodes :' + df_filtered.iloc[0]['date'])
         f.write(html)
-        # p2 = gridplot([ fig_list ])
-        # div, script = components(p2)
-        # script, div = components( gridplot([ fig_list ]) )
-        # plots.append((machine + ' Last weak scaling on up to > 512 nodes :' + df_filtered.iloc[0]['date'] , div, script))
 
         #################################################################################
         ### Third part: for a given test, give performance history for several n_node ###
@@ -209,12 +205,3 @@ with io.open(html_file, 'w', encoding='utf-8') as f:
                                myplot=div,
                                title=machine + ' Performance history for each number of node')
         f.write(html)
-
-        # p3 = gridplot([ fig_list ])
-        # div, script = components(p3)
-        # script, div = components( gridplot([ fig_list ]) )
-        # print(machine + ' Performance history for each number of node')
-        # plots.append((machine + ' Performance history for each number of node', div, script))
-        # f.write(template.render(L=plots))
-
-view(html_file)
