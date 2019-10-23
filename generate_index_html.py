@@ -32,7 +32,7 @@ for machine in list( dict_hdf5_files.keys() ):
                                 'n_mpi_per_node', 'n_omp', 'rep', 'start_date',
                                 'time_initialization', 'step_time'] ]
     # Write to csv
-    df_small.to_csv( csv_file[machine] )
+    df_small.to_csv( dict_csv_files[machine] )
 
 # Generate the HTML file
 with open('templates/template_index.html') as f:
