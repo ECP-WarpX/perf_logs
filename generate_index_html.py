@@ -1,3 +1,4 @@
+import io
 import shutil, os
 from bokeh.plotting import figure, gridplot, output_file, show
 from bokeh.models import Legend
@@ -37,7 +38,7 @@ for machine in list( dict_hdf5_files.keys() ):
 # Generate the HTML file
 with open('templates/template_index.html') as f:
     template = Template(f.read())
-with open(html_file, 'w') as f:
+with io.open(html_file, 'w') as f:
 
     for machine in list( dict_csv_files.keys() ):
 
