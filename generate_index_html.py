@@ -147,7 +147,7 @@ with io.open(html_file, 'w', encoding='utf-8') as f:
                                css_resources=css_resources,
                                script=script,
                                myplot=div,
-                               title=machine + ' Last weak scaling on up to > 512 nodes :' + df_filtered.iloc[0]['date'])
+                               title=machine + ': Last weak scaling on up to > 512 nodes :' + df_filtered.iloc[0]['date'])
         f.write(html)
 
         #################################################################################
@@ -203,5 +203,5 @@ with io.open(html_file, 'w', encoding='utf-8') as f:
                                css_resources=css_resources,
                                script=script,
                                myplot=div,
-                               title=machine + ' Performance history for each number of node')
+                               title=machine + ': Performance history for each number of node')
         f.write(html)
