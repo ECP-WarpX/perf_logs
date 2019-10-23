@@ -136,7 +136,7 @@ with io.open(html_file, 'w', encoding='utf-8') as f:
             fig.xaxis.axis_label = x_label
             fig.yaxis.axis_label = y_label
             fig_list.append( fig )
-            # fig.legend.location='bottom_right'
+            fig.legend.location='bottom_right'
         # Store each plot in a 2d, here we chose a single row 
         pp = gridplot([ fig_list ])        
         js_resources = INLINE.render_js()
