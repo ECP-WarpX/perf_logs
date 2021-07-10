@@ -51,6 +51,8 @@ with io.open(html_file, 'w', encoding='utf-8') as f:
         # Loop on input_file, i.e. different tests
         # One figure per test
         for count, input_file in enumerate( input_file_list ):
+            if type(input_file) != str:
+                continue
             df_filtered = df[ df['input_file']==input_file ]
             y_data_allmax = df_filtered[y_axis].max()
             fig = figure(width=250, plot_height=250, title=input_file.replace('automated_test_',''), 
